@@ -1,22 +1,29 @@
+import { Route, Link, BrowserRouter, Routes } from 'react-router-dom';
 import './App.css';
-import { Button } from "@material-ui/core";
-import { ArrowBackIosRounded  } from "@material-ui/icons";
+
+import UsersPosts from './UsersPosts';
+import PostWithComments from './PostComments';
+import EditPost from './EditPost';
+import AddPost from './AddPost';
+
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">       
-        <ArrowBackIosRounded />
-        <Button
-          color="primary"
-          variant="contained"
-        >
-          Salah hello 
-        </Button>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route exact path="/" element={<UsersPosts />} />
+          <Route exact path="/post/:id" element={<PostWithComments />} />
+          <Route exact path="/edit-post/:id" element={<EditPost />} />
+          <Route exact path="/add-post" element={<AddPost />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 
+
 export default App;
+
 
