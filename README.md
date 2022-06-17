@@ -1,5 +1,5 @@
 # API USED IN THIS TASK: 
-<a href="https://dummyapi.io/docs"> Dummy API.IO  </a>
+<a href="https://dummyapi.io/docs"> Dummy API.io  </a>
 
 # Getting Started with Create React App
 
