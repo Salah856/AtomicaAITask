@@ -1,6 +1,11 @@
 # API USED IN THIS TASK: 
 <a href="https://dummyapi.io/docs"> Dummy API.io  </a>
 
+### Note: 
+
+This above mentioned API unfortunately does NOT support any endpoint for update comments 
+
+
 ## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
