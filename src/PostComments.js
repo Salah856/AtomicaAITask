@@ -13,8 +13,9 @@ import {
 } from "@material-ui/core";
 
 import NewCommentModal from './NewCommentModal';
-import Alert from "@material-ui/lab/Alert";
+import EditCommentModal from './EditCommentModal';
 
+import Alert from "@material-ui/lab/Alert";
 import { useParams } from "react-router-dom"; 
 import configData from "./config"; 
 
@@ -25,6 +26,7 @@ const {
     DELETE_COMMENT_API_URL,
     GET_POST_API_URL,
     CREATE_COMMENT_API_URL,
+    UPDATE_COMMENT_API_URL,
 } = configData
 
 
@@ -124,11 +126,36 @@ const PostWithComments = () => {
         }
     }
 
+    const updateComment = async (commentId, payload) => {
+        try{
+            const res = await axios.put(
+                `${UPDATE_COMMENT_API_URL}/${commentId}`,
+                {
+                    ...payload
+                }, 
+                {
+                    headers: {
+                        "app-id": appId,
+                    }
+                }); 
+            getComments();
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+
     const [newCommentText, setNewCommentText] = useState("");
     const [showAlertError, setShowAlertError] = useState(false);
 
     const [addedNewComment, setAddedNewComment] = useState(false);
     const [newCommentMessage, setNewCommentMessage] = useState("");
+
+    const [editedComment, setEditedComment] = useState(false);
+    const [commentToEdit, setCommentToEdit] = useState({});
+
+    const [isEditingComment, setIsEditingComment] = useState(false);
+    const [updatedCommentText, setUpdatedCommentText] = useState("");
 
 
     return (
@@ -259,30 +286,9 @@ const PostWithComments = () => {
                                     </ListItem>
 
                                     <div>
-                                        <TextField 
-                                            fullWidth
-                                            value={
-                                                !isEditing && indexToEdit !== index 
-                                                    ? 
-                                                comment?.message 
-                                                    : 
-                                                newCommentText
-                                            }
-                                            onChange={(e)=>{
-                                                
-                                                if(isEditing && indexToEdit === index){
-                                                    
-                                                    setNewCommentText(e.target.value);
-                                                    
-                                                }
-                                            }}
-                                            disabled={
-                                                comment?.owner?.id !== post?.owner?.id
-                                                    &&
-                                                indexToEdit !== index
-                                            }
-                                            variant="outlined"
-                                        />
+                                        {
+                                            comment?.message
+                                        }
                                     </div>
 
                                     <div
@@ -310,9 +316,11 @@ const PostWithComments = () => {
                                             variant='contained'
                                             onClick={
                                                 () => {
-                                                    setIndexToEdit(index);
-                                                    setIsEditing(true);
-                                                    setNewCommentText(comment?.message);
+                                                    setEditedComment(true);
+                                                    setCommentToEdit(comment);
+                                                    // setIndexToEdit(index);
+                                                    // setIsEditing(true);
+                                                    // setNewCommentText(comment?.message);
                                                 }
                                             }
                                         >
@@ -337,7 +345,20 @@ const PostWithComments = () => {
                        />
                     )
                 }
-
+                {
+                    !!editedComment && (
+                        <EditCommentModal 
+                            editedComment={editedComment}
+                            setEditedComment={setEditedComment}
+                            commentToEdit={commentToEdit}
+                            isEditingComment={isEditingComment}
+                            setIsEditingComment={setIsEditingComment}
+                            setUpdatedCommentText={setUpdatedCommentText}
+                            updatedCommentText={updatedCommentText}
+                            updateComment={updateComment}
+                        />
+                    )
+                }
             </div>
         </>
     )

@@ -14,6 +14,8 @@ const configData = {
         "https://dummyapi.io/data/v1/comment",
     CREATE_COMMENT_API_URL: 
         "https://dummyapi.io/data/v1/comment/create",
+    UPDATE_COMMENT_API_URL: 
+        "https://dummyapi.io/data/v1/comment",
     
 
 }
