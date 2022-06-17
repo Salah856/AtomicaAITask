@@ -12,6 +12,8 @@ const configData = {
         "https://dummyapi.io/data/v1/post/create",
     DELETE_COMMENT_API_URL:
         "https://dummyapi.io/data/v1/comment",
+    CREATE_COMMENT_API_URL: 
+        "https://dummyapi.io/data/v1/comment/create",
     
 
 }

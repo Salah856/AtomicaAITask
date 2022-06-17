@@ -8,7 +8,11 @@ import {
     ListItemText,
     ListItemAvatar,
     Button, 
+    TextField,
+    Modal, 
 } from "@material-ui/core";
+
+import Alert from "@material-ui/lab/Alert";
 
 import { useParams } from "react-router-dom"; 
 import configData from "./config"; 
@@ -19,6 +23,7 @@ const {
     appId, 
     DELETE_COMMENT_API_URL,
     GET_POST_API_URL,
+    CREATE_COMMENT_API_URL,
 } = configData
 
 
@@ -73,7 +78,32 @@ const PostWithComments = () => {
 
 
 
-    console.log("post owner", post?.owner)
+    const [isEditing, setIsEditing] = useState(false);
+    const [indexToEdit, setIndexToEdit] = useState(null);
+
+    const addNewCommentMessage= async (payload) => {
+        try{
+            const response = await axios.post(
+                `${CREATE_COMMENT_API_URL}`,
+                {
+                    ...payload
+                }, 
+                {
+                    headers: {
+                        "app-id": appId,
+                    }
+                }
+            );
+
+            getComments();
+            setAddedNewComment(false);
+
+        }
+        catch(e){
+
+        }
+    }
+
 
     const deleteComment = async (commentId) => {
         try{
@@ -89,19 +119,41 @@ const PostWithComments = () => {
         }
         catch(error){
             console.log(error);
+            setShowAlertError(true);
         }
     }
+
+    const [newCommentText, setNewCommentText] = useState("");
+    const [showAlertError, setShowAlertError] = useState(false);
+
+    const [addedNewComment, setAddedNewComment] = useState(false);
+    const [newCommentMessage, setNewCommentMessage] = useState("");
 
 
     return (
         <>
+        {
+            !!showAlertError &&(
+               <Alert 
+                    severity="error"
+                    onClose={()=>setShowAlertError(false)}
+                    style={{
+                        marginTop: "2rem",
+                        width: "80%",
+                        marginLeft: "10%",
+                    }}
+                >
+                    You can not delete other user's comment!
+                </Alert>
+            )
+        }
             <div
                 style={{
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    marginTop: "10%",
+                    marginTop: "6rem",
                 }}
             >
                 <Paper
@@ -150,6 +202,21 @@ const PostWithComments = () => {
                 > 
                     Post Comments:  
                 </h2>
+                <div>
+                    <Button
+                        style={{
+                            backgroundColor: "#00FFAB",
+                            margin: "10px",
+                        }}
+                        onClick={
+                            ()=>{
+                                setAddedNewComment(true);
+                            }
+                        }
+                    >
+                        + New Comment
+                    </Button>
+                </div>
                 <Grid container spacing={3}>
                 {
                     comments.map((comment, index) => {
@@ -191,9 +258,30 @@ const PostWithComments = () => {
                                     </ListItem>
 
                                     <div>
-                                        {
-                                            comment?.message
-                                        }
+                                        <TextField 
+                                            fullWidth
+                                            value={
+                                                !isEditing && indexToEdit !== index 
+                                                    ? 
+                                                comment?.message 
+                                                    : 
+                                                newCommentText
+                                            }
+                                            onChange={(e)=>{
+                                                
+                                                if(isEditing && indexToEdit === index){
+                                                    
+                                                    setNewCommentText(e.target.value);
+                                                    
+                                                }
+                                            }}
+                                            disabled={
+                                                comment?.owner?.id !== post?.owner?.id
+                                                    &&
+                                                indexToEdit !== index
+                                            }
+                                            variant="outlined"
+                                        />
                                     </div>
 
                                     <div
@@ -211,10 +299,6 @@ const PostWithComments = () => {
                                             onClick={
                                                 () => {
                                                     deleteComment(comment.id);
-                                                    console.log(
-                                                        "delete comment", 
-                                                        comment.id
-                                                    )
                                                 }
                                             }
                                         >
@@ -223,6 +307,13 @@ const PostWithComments = () => {
                                         <Button
                                             color='primary'
                                             variant='contained'
+                                            onClick={
+                                                () => {
+                                                    setIndexToEdit(index);
+                                                    setIsEditing(true);
+                                                    setNewCommentText(comment?.message);
+                                                }
+                                            }
                                         >
                                             Edit Comment
                                         </Button>
@@ -232,6 +323,55 @@ const PostWithComments = () => {
                     )})
                 }
                 </Grid>
+
+                {
+                    !!addedNewComment && (
+                        <Modal
+                            open={addedNewComment}
+                            onClose={()=>setAddedNewComment(false)}
+                        >
+                            <Paper
+                                style={{
+                                    padding: "2rem",
+                                    marginTop: "6rem",
+                                    width: "80%",
+                                    marginLeft: "10%",
+                                }}
+                            >
+                                <TextField 
+                                    fullWidth
+                                    onChange={
+                                        (e)=>{
+                                            setNewCommentMessage(e.target.value);
+                                        }
+                                    }
+                                    variant="outlined"
+                                    label="New Comment Message"
+                                />
+                                <Button
+                                    style={{
+                                        backgroundColor: "#00FFAB",
+                                        margin: "10px",
+                                    }}
+                                    onClick={
+                                        ()=>{
+                                            let payload = {
+                                                message: newCommentMessage,
+                                                owner: "60d0fe4f5311236168a109ca", 
+                                                post: id, 
+                                            }; 
+
+                                            addNewCommentMessage(payload);
+
+                                        }
+                                    }
+                                >
+                                    Add Comment
+                                </Button>
+                            </Paper>
+                        </Modal>
+                    )
+                }
 
             </div>
         </>

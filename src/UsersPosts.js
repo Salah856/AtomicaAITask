@@ -30,9 +30,9 @@ const UsersPosts = () => {
 
     const [posts, setPosts] = useState([]);
     const navigate = useNavigate();
-
     const [deletePostSuccess, setDeletePostSuccess] = useState(false);
 
+    
     const getUserPosts = async () => {
 
         try{
