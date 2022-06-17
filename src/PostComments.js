@@ -12,6 +12,7 @@ import {
     Modal, 
 } from "@material-ui/core";
 
+import NewCommentModal from './NewCommentModal';
 import Alert from "@material-ui/lab/Alert";
 
 import { useParams } from "react-router-dom"; 
@@ -326,50 +327,14 @@ const PostWithComments = () => {
 
                 {
                     !!addedNewComment && (
-                        <Modal
-                            open={addedNewComment}
-                            onClose={()=>setAddedNewComment(false)}
-                        >
-                            <Paper
-                                style={{
-                                    padding: "2rem",
-                                    marginTop: "6rem",
-                                    width: "80%",
-                                    marginLeft: "10%",
-                                }}
-                            >
-                                <TextField 
-                                    fullWidth
-                                    onChange={
-                                        (e)=>{
-                                            setNewCommentMessage(e.target.value);
-                                        }
-                                    }
-                                    variant="outlined"
-                                    label="New Comment Message"
-                                />
-                                <Button
-                                    style={{
-                                        backgroundColor: "#00FFAB",
-                                        margin: "10px",
-                                    }}
-                                    onClick={
-                                        ()=>{
-                                            let payload = {
-                                                message: newCommentMessage,
-                                                owner: "60d0fe4f5311236168a109ca", 
-                                                post: id, 
-                                            }; 
-
-                                            addNewCommentMessage(payload);
-
-                                        }
-                                    }
-                                >
-                                    Add Comment
-                                </Button>
-                            </Paper>
-                        </Modal>
+                       <NewCommentModal 
+                            addedNewComment={addedNewComment}
+                            setAddedNewComment={setAddedNewComment}
+                            setNewCommentMessage={setNewCommentMessage}
+                            id={id}
+                            newCommentMessage={newCommentMessage}
+                            addNewCommentMessage={addNewCommentMessage}
+                       />
                     )
                 }
 
